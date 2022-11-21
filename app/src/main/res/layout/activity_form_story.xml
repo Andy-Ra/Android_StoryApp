@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="5dp"
+    tools:context=".ui.views.story.PostStoryActivity">
+
+    <ImageView
+        android:id="@+id/imv_form_story"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/user_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/blue_oval_shape"
+        android:contentDescription="@string/everyone"
+        android:text="@string/everyone"
+        android:textAllCaps="false"
+        android:textColor="@color/sea_blue"
+        app:layout_constraintBottom_toBottomOf="@id/imv_form_story"
+        app:layout_constraintStart_toEndOf="@id/imv_form_story"
+        app:layout_constraintTop_toTopOf="@id/imv_form_story" />
+
+    <EditText
+        android:id="@+id/ed_form_detail_story"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="top|start"
+        android:hint="@string/helper_story"
+        android:inputType="textMultiLine"
+        android:lines="6"
+        android:maxLines="10"
+        android:minLines="4"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="@id/imv_form_story"
+        app:layout_constraintTop_toBottomOf="@id/imv_form_story" />
+
+    <ImageView
+        android:id="@+id/imv_post_story"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:contentDescription="@string/story_image"
+        app:layout_constraintTop_toBottomOf="@id/ed_form_detail_story" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_form_camera"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_baseline_add_a_photo_24"
+            android:backgroundTint="@color/sea_blue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_form_gallery"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_form_gallery"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_baseline_add_photo_alternate_24"
+            android:backgroundTint="@color/sea_blue"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_form_camera" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

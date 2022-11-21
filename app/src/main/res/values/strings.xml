@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="login_session">Session</string>
+
+    <!--    Login-->
+    <string name="login">Log in</string>
+    <string name="login_your_account">Log in to your account</string>
+    <string name="or">OR</string>
+    <string name="register">Create New Account</string>
+    <string name="create_account">Create Account</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="have_account">Already Have an Account</string>
+
+    <!--    material-->
+    <string name="version_title">Version</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email Address</string>
+    <string name="password">Password</string>
+    <string name="story_text">Story Text</string>
+    <string name="created_at">Created At</string>
+    <string name="post">Post</string>
+    <string name="everyone">Everyone</string>
+    <string name="picture">picture</string>
+    <string name="logout">Log Out</string>
+
+    <!--    Content Description-->
+    <string name="login_button">Log in Button</string>
+    <string name="register_button">Register Button</string>
+    <string name="login_page">Going to Log in Page</string>
+    <string name="register_page">Going to Register Page</string>
+    <string name="icon">show app icon</string>
+    <string name="new_story_button">Add new Story</string>
+    <string name="user_image">Photo Profile User</string>
+    <string name="story_image">Image Story</string>
+    <string name="close_page">Close Page</string>
+    <string name="post_story">Post Story</string>
+    <string name="capture_photo">Capture Photos</string>
+    <string name="switch_camera">Switch Camera</string>
+
+
+    <!--    notification-->
+    <string name="success">Success</string>
+    <string name="required_field">Field must be filled in</string>
+    <string name="invalid_email">Not a valid email</string>
+    <string name="invalid_password">Password must be > 6 characters</string>
+    <string name="helper_story">What\'s on your mind?</string>
+    <string name="cant_show_camera">Can\'t show camera</string>
+    <string name="failed_take_picture">Failed to take a picture</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="fill_this_form">Please fill this form</string>
+    <string name="no_one_image">Please choose one image</string>
+
+</resources>
