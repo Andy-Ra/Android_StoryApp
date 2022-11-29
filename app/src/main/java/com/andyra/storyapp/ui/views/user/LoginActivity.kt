@@ -1,9 +1,10 @@
 package com.andyra.storyapp.ui.views.user
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Patterns
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -34,6 +35,8 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
 
         setContentView(mBinding.root)
         mUserVM.mUserAuthentication = this
+
+        getAnimation()
         mBinding.btnLoginCreate.setOnClickListener {
             intent(RegisterActivity::class.java)
             finish()
@@ -42,7 +45,6 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
         mBinding.btnLoginLogin.setOnClickListener {
             validation()
         }
-        removeSpacingPassword()
     }
 
 
@@ -66,7 +68,8 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
         var validForm = true
         mBinding.apply {
             loginEmail = edLoginEmail.editableText.toString()
-            loginPass = edLoginPassword.editableText.toString().replace(" ", "")
+            loginPass = edLoginPassword.editableText.toString()
+
             if (!Patterns.EMAIL_ADDRESS.matcher(loginEmail).matches()) {
                 edLoginEmail.error = getString(R.string.invalid_email)
                 validForm = false
@@ -92,25 +95,33 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
 
     }
 
-    private fun removeSpacingPassword() {
-        mBinding.apply {
-            edLoginPassword.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(p0: Editable?) {}
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    val mLoginPass = edLoginPassword.editableText.toString()
-                    loginPass = mLoginPass.replace(" ", "")
-                    if (mLoginPass != loginPass) {
-                        edLoginPassword.setText(loginPass)
-                    }
+    private fun getAnimation() {
+        ObjectAnimator.ofFloat(mBinding.tvLoginTitle, View.TRANSLATION_X, 0f, 60f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+        val emailAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyLoginEmail, View.ALPHA, 1f).setDuration(600)
+        val passwordAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyLoginPassword, View.ALPHA, 1f).setDuration(600)
+        val btnLoginAnimation =
+            ObjectAnimator.ofFloat(mBinding.btnLoginLogin, View.ALPHA, 1f).setDuration(600)
+        val btnCreateAnimation =
+            ObjectAnimator.ofFloat(mBinding.btnLoginCreate, View.ALPHA, 1f).setDuration(600)
+        val txtOrAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyLoginOr, View.ALPHA, 1f).setDuration(600)
 
-                    val passPosition = edLoginPassword.editableText.length
-                    edLoginPassword.setSelection(passPosition)
-                }
-            })
-
+        AnimatorSet().apply {
+            playSequentially(
+                emailAnimation,
+                passwordAnimation,
+                btnLoginAnimation,
+                txtOrAnimation,
+                btnCreateAnimation
+            )
+            start()
         }
     }
-
 
 }

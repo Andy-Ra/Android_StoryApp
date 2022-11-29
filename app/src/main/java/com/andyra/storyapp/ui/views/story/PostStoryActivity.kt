@@ -16,7 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.andyra.storyapp.R
 import com.andyra.storyapp.data.remote.story.StoryResponse
-import com.andyra.storyapp.databinding.ActivityFormStoryBinding
+import com.andyra.storyapp.databinding.ActivityPostStoryBinding
 import com.andyra.storyapp.databinding.CustomStoryActionBarLayoutBinding
 import com.andyra.storyapp.preference.SessionPreference
 import com.andyra.storyapp.ui.auth.PostAuthentication
@@ -37,7 +37,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 class PostStoryActivity : AppCompatActivity(), PostAuthentication{
-    private lateinit var mBinding: ActivityFormStoryBinding
+    private lateinit var mBinding: ActivityPostStoryBinding
     private lateinit var mActionBinding: CustomStoryActionBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
 
@@ -50,7 +50,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = ActivityFormStoryBinding.inflate(layoutInflater)
+        mBinding = ActivityPostStoryBinding.inflate(layoutInflater)
         mActionBinding = CustomStoryActionBarLayoutBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 

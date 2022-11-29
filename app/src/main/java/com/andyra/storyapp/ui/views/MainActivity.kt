@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
         mToken = ""
         mSessionPreference.setSession(mToken)
         intent(LoginActivity::class.java)
+        finish()
     }
 
 

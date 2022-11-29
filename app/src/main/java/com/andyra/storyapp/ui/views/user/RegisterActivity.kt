@@ -1,10 +1,11 @@
 package com.andyra.storyapp.ui.views.user
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Patterns
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import com.andyra.storyapp.R
@@ -32,7 +33,7 @@ class RegisterActivity : AppCompatActivity(), UserAuthentication {
         mBinding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         mUserVM.mUserAuthentication = this
-
+        getAnimation()
         mBinding.btnRegisterLogin.setOnClickListener {
             intent(LoginActivity::class.java)
             finish()
@@ -41,7 +42,6 @@ class RegisterActivity : AppCompatActivity(), UserAuthentication {
         mBinding.btnRegisterRegister.setOnClickListener {
             validation()
         }
-        removeSpacingPassword()
     }
 
     override fun onSuccess(mLoginRegisterResponse: LiveData<LoginRegisterResponse>) {
@@ -65,6 +65,7 @@ class RegisterActivity : AppCompatActivity(), UserAuthentication {
             regisFName = edRegisterFirstName.editableText.toString().replace(" ", "")
             regisLName = edRegisterLastName.editableText.toString().replace(" ", "")
             regisEmail = edRegisterEmail.editableText.toString()
+            regisPass = edRegisterPassword.editableText.toString()
 
             if (regisFName.isBlank()) {
                 edRegisterFirstName.error = getString(R.string.required_field)
@@ -101,23 +102,36 @@ class RegisterActivity : AppCompatActivity(), UserAuthentication {
         }
     }
 
-    private fun removeSpacingPassword() {
-        mBinding.apply {
-            edRegisterPassword.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(p0: Editable?) {}
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    val regPass = edRegisterPassword.editableText.toString()
-                    regisPass = regPass.replace(" ", "")
-                    if (regPass != regisPass) {
-                        edRegisterPassword.setText(regisPass)
-                    }
+    private fun getAnimation() {
+        ObjectAnimator.ofFloat(mBinding.tvRegisterTitle, View.TRANSLATION_X, 0f, 60f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+        val lynameAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyRegisterName, View.ALPHA, 1f).setDuration(600)
+        val emailAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyRegisterEmail, View.ALPHA, 1f).setDuration(600)
+        val passwordAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyRegisterPassword, View.ALPHA, 1f).setDuration(600)
+        val btnCreateAnimation =
+            ObjectAnimator.ofFloat(mBinding.btnRegisterRegister, View.ALPHA, 1f).setDuration(600)
+        val btnLoginAnimation =
+            ObjectAnimator.ofFloat(mBinding.btnRegisterLogin, View.ALPHA, 1f).setDuration(600)
+        val txtOrAnimation =
+            ObjectAnimator.ofFloat(mBinding.lyRegisterOr, View.ALPHA, 1f).setDuration(600)
 
-                    val passPosition = edRegisterPassword.editableText.length
-                    edRegisterPassword.setSelection(passPosition)
-                }
-            })
-
+        AnimatorSet().apply {
+            playSequentially(
+                lynameAnimation,
+                emailAnimation,
+                passwordAnimation,
+                btnCreateAnimation,
+                txtOrAnimation,
+                btnLoginAnimation
+            )
+            start()
         }
     }
+
 }
