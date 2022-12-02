@@ -49,4 +49,15 @@ class StoryViewModel(mApplication: Application) : AndroidViewModel(mApplication)
                 }
             }
         }
+
+
+    fun getLocation(mTokenId: String, mLocation: Int) = viewModelScope.launch {
+        mStoryRepo.getUserLocation(mTokenId, mLocation).run {
+            if (this.isSuccessful) {
+                mMutableStoryResponse.value = this.body()
+                mStoryAuthentication?.onSuccess(mLDStoryResponse.value!!.listStory!!)
+            }
+        }
+    }
+
 }

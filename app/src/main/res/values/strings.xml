@@ -24,6 +24,7 @@
     <string name="everyone">Everyone</string>
     <string name="picture">picture</string>
     <string name="logout">Log Out</string>
+    <string name="maps">Maps</string>
 
     <!--    Content Description-->
     <string name="login_button">Log in Button</string>
@@ -38,6 +39,7 @@
     <string name="post_story">Post Story</string>
     <string name="capture_photo">Capture Photos</string>
     <string name="switch_camera">Switch Camera</string>
+    <string name="user_locations">User Locations</string>
 
 
     <!--    notification-->
@@ -51,5 +53,11 @@
     <string name="permission_denied">Permission denied</string>
     <string name="fill_this_form">Please fill this form</string>
     <string name="no_one_image">Please choose one image</string>
+    <string name="title_activity_location">LocationActivity</string>
 
+    <!-- Maps Theme-->
+    <string name="maps_normal_type">Normal</string>
+    <string name="maps_satellite_type">Satellite</string>
+    <string name="maps_terrain_type">Terrain</string>
+    <string name="maps_hybrid_type">Hybrid</string>
 </resources>

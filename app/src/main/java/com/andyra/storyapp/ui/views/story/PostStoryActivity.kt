@@ -36,7 +36,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class PostStoryActivity : AppCompatActivity(), PostAuthentication{
+class PostStoryActivity : AppCompatActivity(), PostAuthentication {
     private lateinit var mBinding: ActivityPostStoryBinding
     private lateinit var mActionBinding: CustomStoryActionBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
@@ -44,7 +44,6 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
     private val mStoryVM: StoryViewModel by viewModels()
     private val mLoading = LoadingDialog(this)
 
-    private var mToken = ""
     private var mDescription = ""
     private var imageStoryFile: File? = null
 
@@ -59,7 +58,6 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
         supportActionBar?.customView = mActionBinding.root
 
         mSessionPreference = SessionPreference(this)
-        mToken = StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
         mStoryVM.mPostAuthentication = this
 
         mBinding.apply {
@@ -99,6 +97,18 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
         }
     }
 
+    override fun onSuccess(mStoryResponse: StoryResponse) {
+        mLoading.isLoading(false)
+        toast(mStoryResponse.message)
+
+        intent(MainActivity::class.java)
+        finish()
+    }
+
+    override fun onFailure(mStoryResponse: StoryResponse) {
+        mLoading.isLoading(false)
+        toast(mStoryResponse.message)
+    }
 
     private fun checkForm() {
         var validForm = true
@@ -127,6 +137,8 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
     private fun uploadImage() {
         mLoading.isLoading(true)
         if (imageStoryFile != null) {
+            val mTokenID =
+                StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
             val mDescriptionBody = mDescription.toRequestBody("text/plain".toMediaType())
             val mFile = reduceFileImage(imageStoryFile as File)
             val requestImageFile = mFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
@@ -137,7 +149,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
             )
 
             mStoryVM.postStory(
-                mToken,
+                mTokenID,
                 mImageMultipart,
                 mDescriptionBody
             )
@@ -226,16 +238,4 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication{
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
-    override fun onSuccess(mStoryResponse: StoryResponse) {
-        mLoading.isLoading(false)
-        toast(mStoryResponse.message)
-
-        intent(MainActivity::class.java)
-        finish()
-    }
-
-    override fun onFailure(mStoryResponse: StoryResponse) {
-        mLoading.isLoading(false)
-        toast(mStoryResponse.message)
-    }
 }

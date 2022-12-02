@@ -11,6 +11,17 @@ import retrofit2.http.*
 
 interface ApiServices {
 
+    @GET("stories")
+    suspend fun getListStory(
+        @Header ("Authorization") tokenId :String
+    ): Response<StoryResponse>
+
+    @GET("stories")
+    suspend fun getListStoryWithLocation(
+        @Header ("Authorization") tokenId :String,
+        @Query("location") location: Int
+    ): Response<StoryResponse>
+
     @POST("register")
     suspend fun postUserRegister(
         @Body RegisterRequest: RegisterRequest
@@ -21,11 +32,6 @@ interface ApiServices {
     suspend fun getUserLogin(
         @Body loginRequest: LoginRequest
     ): Response<LoginRegisterResponse>
-
-    @GET("stories")
-    suspend fun getListStory(
-        @Header ("Authorization") tokenId :String
-    ): Response<StoryResponse>
 
     @Multipart
     @POST("stories")

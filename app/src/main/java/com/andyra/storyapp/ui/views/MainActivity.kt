@@ -15,10 +15,10 @@ import com.andyra.storyapp.databinding.CustomMainActionBarLayoutBinding
 import com.andyra.storyapp.preference.SessionPreference
 import com.andyra.storyapp.ui.auth.StoryAuthentication
 import com.andyra.storyapp.ui.viewmodel.StoryViewModel
+import com.andyra.storyapp.ui.views.story.UserLocationActivity
 import com.andyra.storyapp.ui.views.story.PostStoryActivity
 import com.andyra.storyapp.ui.views.user.LoginActivity
-import com.andyra.storyapp.util.LoadingDialog
-import com.andyra.storyapp.util.intent
+import com.andyra.storyapp.util.*
 
 class MainActivity : AppCompatActivity(), StoryAuthentication {
     private lateinit var mBinding: ActivityMainBinding
@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
     private val mLoading = LoadingDialog(this)
 
     private val mListStory = ArrayList<ListStoryResponse>()
-    private var mToken = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +50,6 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
         }
 
         mLoading.isLoading(true)
-        getToken()
         getListStory()
         mBinding.rvListStory.setHasFixedSize(true)
     }
@@ -64,8 +62,12 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.logout -> {
+            R.id.menu_logout -> {
                 logOut()
+                true
+            }
+            R.id.menu_maps -> {
+                intent(UserLocationActivity::class.java)
                 true
             }
             else -> true
@@ -73,8 +75,7 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
     }
 
     private fun logOut() {
-        mToken = ""
-        mSessionPreference.setSession(mToken)
+        mSessionPreference.setSession("")
         intent(LoginActivity::class.java)
         finish()
     }
@@ -88,21 +89,18 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
                 mStory.name,
                 mStory.createdAt,
                 mStory.description,
-                mStory.photoUrl
+                mStory.photoUrl,
+                mStory.lat,
+                mStory.lon
             ))
         }
         showRecyclerList()
         mLoading.isLoading(false)
     }
 
-    private fun getToken() {
-        mToken = mSessionPreference.getSession().toString()
-    }
-
-
     private fun getListStory() {
-        val mTokenId = StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
-        mStoryVM.listStory(mTokenId)
+        val mTokenID = StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
+        mStoryVM.listStory(mTokenID)
     }
 
     private fun showRecyclerList() {

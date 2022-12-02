@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.andyra.storyapp.BuildConfig
 import com.andyra.storyapp.R
 import com.andyra.storyapp.databinding.ActivitySplashScreenBinding
@@ -36,9 +35,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun checkSession() {
         val mToken = mSessionPreference.getSession().toString()
-        Log.e(
-            this@SplashScreenActivity.toString(), "ara session $mToken"
-        )
         if (mToken == "") {
             intent(LoginActivity::class.java)
             finish()
