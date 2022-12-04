@@ -29,7 +29,7 @@ class DetailStoryActivity : AppCompatActivity() {
         setDetail()
 
         mActionBarBinding.imbCloseDetailStory.setOnClickListener {
-            this.finish()
+            finish()
         }
     }
 

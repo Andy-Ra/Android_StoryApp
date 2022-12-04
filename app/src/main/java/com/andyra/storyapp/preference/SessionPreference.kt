@@ -9,7 +9,6 @@ class SessionPreference(context: Context) {
     fun setSession(mToken: String) {
         val mEditValue = preferences.edit()
         mEditValue.putString(EXTRA_TOKEN_ID, mToken)
-        Log.e(this@SessionPreference.toString(), "ara session value $mToken")
         mEditValue.apply()
     }
 

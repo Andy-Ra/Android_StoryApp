@@ -16,8 +16,9 @@ import com.andyra.storyapp.data.remote.story.ListStoryResponse
 import com.andyra.storyapp.databinding.ActivityUserLocationBinding
 import com.andyra.storyapp.databinding.CustomUserLocationBarLayoutBinding
 import com.andyra.storyapp.preference.SessionPreference
-import com.andyra.storyapp.ui.auth.StoryAuthentication
+import com.andyra.storyapp.ui.auth.LocationAuthentication
 import com.andyra.storyapp.ui.viewmodel.StoryViewModel
+import com.andyra.storyapp.ui.viewmodel.ViewModelFactory
 import com.andyra.storyapp.util.LoadingDialog
 import com.andyra.storyapp.util.toast
 
@@ -27,14 +28,18 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class UserLocationActivity : AppCompatActivity(), OnMapReadyCallback, StoryAuthentication {
+class UserLocationActivity : AppCompatActivity(), OnMapReadyCallback, LocationAuthentication {
 
     private lateinit var mGMap: GoogleMap
     private lateinit var mBinding: ActivityUserLocationBinding
     private lateinit var mActionBinding: CustomUserLocationBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
 
-    private val mStoryVM: StoryViewModel by viewModels()
+
+    private val mStoryVM: StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
+
     private val mLoading = LoadingDialog(this)
 
     private val mListStory = ArrayList<ListStoryResponse>()
@@ -50,7 +55,7 @@ class UserLocationActivity : AppCompatActivity(), OnMapReadyCallback, StoryAuthe
         supportActionBar?.setDisplayShowCustomEnabled(true)
         supportActionBar?.customView = mActionBinding.root
 
-        mStoryVM.mStoryAuthentication = this
+        mStoryVM.mLocationAuthentication = this
         mSessionPreference = SessionPreference(this)
 
 

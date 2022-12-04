@@ -7,28 +7,31 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.andyra.storyapp.R
 import com.andyra.storyapp.adapter.ListStoryAdapter
-import com.andyra.storyapp.data.remote.story.ListStoryResponse
 import com.andyra.storyapp.databinding.ActivityMainBinding
 import com.andyra.storyapp.databinding.CustomMainActionBarLayoutBinding
 import com.andyra.storyapp.preference.SessionPreference
-import com.andyra.storyapp.ui.auth.StoryAuthentication
 import com.andyra.storyapp.ui.viewmodel.StoryViewModel
+import com.andyra.storyapp.ui.viewmodel.ViewModelFactory
 import com.andyra.storyapp.ui.views.story.UserLocationActivity
 import com.andyra.storyapp.ui.views.story.PostStoryActivity
 import com.andyra.storyapp.ui.views.user.LoginActivity
 import com.andyra.storyapp.util.*
+import java.util.*
+import kotlin.concurrent.schedule
 
-class MainActivity : AppCompatActivity(), StoryAuthentication {
+class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mActionBarBinding: CustomMainActionBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
+    private lateinit var mListStoryAdapter: ListStoryAdapter
 
-    private val mStoryVM: StoryViewModel by viewModels()
+    private val mStoryVM: StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
     private val mLoading = LoadingDialog(this)
-
-    private val mListStory = ArrayList<ListStoryResponse>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +44,12 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
         supportActionBar?.setDisplayShowCustomEnabled(true)
         supportActionBar?.customView = mActionBarBinding.root
 
-        mStoryVM.mStoryAuthentication = this
         mSessionPreference = SessionPreference(this)
 
+
+        mBinding.swpRefreshStory.setOnRefreshListener {
+            onRefresh()
+        }
 
         mBinding.imbAddStory.setOnClickListener {
             intent(PostStoryActivity::class.java)
@@ -51,7 +57,7 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
 
         mLoading.isLoading(true)
         getListStory()
-        mBinding.rvListStory.setHasFixedSize(true)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,40 +80,37 @@ class MainActivity : AppCompatActivity(), StoryAuthentication {
         }
     }
 
+    override fun onRefresh() {
+        mBinding.apply {
+            swpRefreshStory.isRefreshing = true
+            mListStoryAdapter.refresh()
+            Timer().schedule(2000) {
+                swpRefreshStory.isRefreshing = false
+                rvListStory.smoothScrollToPosition(0)
+            }
+        }
+    }
+
     private fun logOut() {
         mSessionPreference.setSession("")
         intent(LoginActivity::class.java)
         finish()
     }
 
-
-    override fun onSuccess(mListStoryResponse: ArrayList<ListStoryResponse>) {
-        mListStory.clear()
-        for(mStory in mListStoryResponse){
-            mListStory.add(ListStoryResponse(
-                mStory.id,
-                mStory.name,
-                mStory.createdAt,
-                mStory.description,
-                mStory.photoUrl,
-                mStory.lat,
-                mStory.lon
-            ))
-        }
-        showRecyclerList()
-        mLoading.isLoading(false)
-    }
-
     private fun getListStory() {
-        val mTokenID = StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
-        mStoryVM.listStory(mTokenID)
-    }
-
-    private fun showRecyclerList() {
+        mListStoryAdapter = ListStoryAdapter()
         mBinding.apply {
+            rvListStory.setHasFixedSize(true)
             rvListStory.layoutManager = LinearLayoutManager(root.context)
-            val mListStoryAdapter = ListStoryAdapter(mListStory)
             rvListStory.adapter = mListStoryAdapter
         }
+
+        val mTokenID = StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
+        mStoryVM.listStory(mTokenID).observe(this
+        ) {
+            mListStoryAdapter.submitData(lifecycle, it)
+        }
+
+        mLoading.isLoading(false)
     }
 }

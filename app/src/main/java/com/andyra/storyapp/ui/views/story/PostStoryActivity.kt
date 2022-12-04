@@ -21,9 +21,8 @@ import com.andyra.storyapp.databinding.CustomStoryActionBarLayoutBinding
 import com.andyra.storyapp.preference.SessionPreference
 import com.andyra.storyapp.ui.auth.PostAuthentication
 import com.andyra.storyapp.ui.viewmodel.StoryViewModel
-import com.andyra.storyapp.ui.views.MainActivity
+import com.andyra.storyapp.ui.viewmodel.ViewModelFactory
 import com.andyra.storyapp.util.LoadingDialog
-import com.andyra.storyapp.util.intent
 import com.andyra.storyapp.util.toast
 import com.andyra.storyapp.util.uriToFile
 import com.bumptech.glide.Glide
@@ -41,7 +40,10 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
     private lateinit var mActionBinding: CustomStoryActionBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
 
-    private val mStoryVM: StoryViewModel by viewModels()
+
+    private val mStoryVM: StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
     private val mLoading = LoadingDialog(this)
 
     private var mDescription = ""
@@ -101,7 +103,6 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
         mLoading.isLoading(false)
         toast(mStoryResponse.message)
 
-        intent(MainActivity::class.java)
         finish()
     }
 

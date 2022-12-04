@@ -40,6 +40,7 @@
     <string name="capture_photo">Capture Photos</string>
     <string name="switch_camera">Switch Camera</string>
     <string name="user_locations">User Locations</string>
+    <string name="unknown_viewmodel">Unknown ViewModel class</string>
 
 
     <!--    notification-->

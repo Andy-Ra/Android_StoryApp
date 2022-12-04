@@ -1,36 +1,30 @@
 package com.andyra.storyapp.ui.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.andyra.storyapp.data.remote.story.ListStoryResponse
 import com.andyra.storyapp.data.remote.story.StoryResponse
 import com.andyra.storyapp.repository.StoryRepository
 import com.andyra.storyapp.ui.auth.PostAuthentication
-import com.andyra.storyapp.ui.auth.StoryAuthentication
+import com.andyra.storyapp.ui.auth.LocationAuthentication
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class StoryViewModel(mApplication: Application) : AndroidViewModel(mApplication) {
-    private val mStoryRepo = StoryRepository()
+class StoryViewModel(private val mStoryRepo: StoryRepository) : ViewModel() {
     private val mMutableStoryResponse = MutableLiveData<StoryResponse>()
+
     private val mLDStoryResponse: LiveData<StoryResponse> = mMutableStoryResponse
 
-    var mStoryAuthentication: StoryAuthentication? = null
+    var mLocationAuthentication: LocationAuthentication? = null
     var mPostAuthentication: PostAuthentication? = null
 
-    fun listStory(mTokenId: String) = viewModelScope.launch {
-        mStoryRepo.getListStoryFromRemote(mTokenId).run {
-            if (this.isSuccessful) {
-                mMutableStoryResponse.value = this.body()
-                mStoryAuthentication?.onSuccess(mLDStoryResponse.value!!.listStory!!)
-            }
-        }
-    }
+
+    fun listStory(mTokenId: String): LiveData<PagingData<ListStoryResponse>> =
+        mStoryRepo.getListStoryFromRemote(mTokenId).cachedIn(viewModelScope)
 
     fun postStory(mTokenId: String, mPhoto: MultipartBody.Part, mDescription: RequestBody) =
         viewModelScope.launch {
@@ -55,7 +49,7 @@ class StoryViewModel(mApplication: Application) : AndroidViewModel(mApplication)
         mStoryRepo.getUserLocation(mTokenId, mLocation).run {
             if (this.isSuccessful) {
                 mMutableStoryResponse.value = this.body()
-                mStoryAuthentication?.onSuccess(mLDStoryResponse.value!!.listStory!!)
+                mLocationAuthentication?.onSuccess(mLDStoryResponse.value!!.listStory!!)
             }
         }
     }
