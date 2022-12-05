@@ -1,7 +1,6 @@
 package com.andyra.storyapp.preference
 
 import android.content.Context
-import android.util.Log
 
 class SessionPreference(context: Context) {
     private val preferences = context.getSharedPreferences(EXTRA_TOKEN_ID, Context.MODE_PRIVATE)

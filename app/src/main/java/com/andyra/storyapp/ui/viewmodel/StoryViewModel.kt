@@ -7,8 +7,8 @@ import androidx.paging.cachedIn
 import com.andyra.storyapp.data.remote.story.ListStoryResponse
 import com.andyra.storyapp.data.remote.story.StoryResponse
 import com.andyra.storyapp.repository.StoryRepository
-import com.andyra.storyapp.ui.auth.PostAuthentication
 import com.andyra.storyapp.ui.auth.LocationAuthentication
+import com.andyra.storyapp.ui.auth.PostAuthentication
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -26,9 +26,9 @@ class StoryViewModel(private val mStoryRepo: StoryRepository) : ViewModel() {
     fun listStory(mTokenId: String): LiveData<PagingData<ListStoryResponse>> =
         mStoryRepo.getListStoryFromRemote(mTokenId).cachedIn(viewModelScope)
 
-    fun postStory(mTokenId: String, mPhoto: MultipartBody.Part, mDescription: RequestBody) =
+    fun postStory(mTokenId: String, mPhoto: MultipartBody.Part, mDescription: RequestBody, mLat: Double?, mLon: Double?)=
         viewModelScope.launch {
-            mStoryRepo.postStoryToRemote(mTokenId, mPhoto, mDescription).run {
+            mStoryRepo.postStoryToRemote(mTokenId, mPhoto, mDescription,mLat, mLon).run {
                 Log.e(this@StoryViewModel.toString(), "ara tokennn $mTokenId")
                 if (this.isSuccessful) {
                     mMutableStoryResponse.value = this.body()

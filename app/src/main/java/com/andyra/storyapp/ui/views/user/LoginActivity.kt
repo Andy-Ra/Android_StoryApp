@@ -12,6 +12,7 @@ import com.andyra.storyapp.R
 import com.andyra.storyapp.data.remote.LoginRegisterResponse
 import com.andyra.storyapp.data.remote.login.LoginRequest
 import com.andyra.storyapp.databinding.ActivityLoginBinding
+import com.andyra.storyapp.preference.SessionPreference
 import com.andyra.storyapp.ui.auth.UserAuthentication
 import com.andyra.storyapp.ui.viewmodel.UserViewModel
 import com.andyra.storyapp.ui.views.MainActivity
@@ -22,6 +23,7 @@ import com.andyra.storyapp.util.toast
 
 class LoginActivity : AppCompatActivity(), UserAuthentication {
     private lateinit var mBinding: ActivityLoginBinding
+    private lateinit var mSessionPreference: SessionPreference
 
     private val mUserVM: UserViewModel by viewModels()
     private val mLoading = LoadingDialog(this)
@@ -34,6 +36,7 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
 
         setContentView(mBinding.root)
+        mSessionPreference = SessionPreference(this)
         mUserVM.mUserAuthentication = this
 
         getAnimation()
@@ -52,7 +55,7 @@ class LoginActivity : AppCompatActivity(), UserAuthentication {
         mLoading.isLoading(false)
         val responseResult = mLoginRegisterResponse.value
         toast(responseResult!!.message)
-
+        mSessionPreference.setSession(responseResult.loginResult!!.token.toString())
 
         intent(MainActivity::class.java)
         finish()

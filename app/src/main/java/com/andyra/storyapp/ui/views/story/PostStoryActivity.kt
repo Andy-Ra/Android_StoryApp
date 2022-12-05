@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
@@ -26,6 +27,9 @@ import com.andyra.storyapp.util.LoadingDialog
 import com.andyra.storyapp.util.toast
 import com.andyra.storyapp.util.uriToFile
 import com.bumptech.glide.Glide
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -39,7 +43,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
     private lateinit var mBinding: ActivityPostStoryBinding
     private lateinit var mActionBinding: CustomStoryActionBarLayoutBinding
     private lateinit var mSessionPreference: SessionPreference
-
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     private val mStoryVM: StoryViewModel by viewModels {
         ViewModelFactory(this)
@@ -48,6 +52,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
 
     private var mDescription = ""
     private var imageStoryFile: File? = null
+    private var myLocation: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +64,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
         supportActionBar?.setDisplayShowCustomEnabled(true)
         supportActionBar?.customView = mActionBinding.root
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSessionPreference = SessionPreference(this)
         mStoryVM.mPostAuthentication = this
 
@@ -66,9 +72,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
             btnFormCamera.setOnClickListener {
                 if (!allPermissionsGranted()) {
                     ActivityCompat.requestPermissions(
-                        this@PostStoryActivity,
-                        REQUIRED_PERMISSIONS,
-                        REQUEST_CODE_PERMISSIONS
+                        this@PostStoryActivity, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
                     )
                 } else {
                     showCamera()
@@ -76,6 +80,18 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
             }
             btnFormGallery.setOnClickListener {
                 showGallery()
+            }
+            tbFormLocation.setOnClickListener {
+                if (tbFormLocation.isChecked) {
+                    tbFormLocation.setBackgroundResource(R.drawable.ic_baseline_wrong_location_24)
+                    getCurrentLocation()
+                    Log.e(this@PostStoryActivity.toString(), "ara ini menghidupkan")
+                } else {
+                    tbFormLocation.setBackgroundResource(R.drawable.ic_baseline_add_location_blue_alt_24)
+
+                    myLocation = null
+                    Log.e(this@PostStoryActivity.toString(), "ara ini mematikan")
+                }
             }
         }
 
@@ -85,9 +101,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
 
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
@@ -137,6 +151,16 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
 
     private fun uploadImage() {
         mLoading.isLoading(true)
+        var mLat: Double?  = null
+        var mLon: Double? = null
+        if(myLocation != null){
+            mLat = myLocation?.latitude
+            mLon = myLocation?.longitude
+        }
+
+        Log.e(this@PostStoryActivity.toString(), "ara Lat $mLat")
+        Log.e(this@PostStoryActivity.toString(), "ara Lon $mLon")
+
         if (imageStoryFile != null) {
             val mTokenID =
                 StringBuilder("Bearer ").append(mSessionPreference.getSession()).toString()
@@ -144,15 +168,11 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
             val mFile = reduceFileImage(imageStoryFile as File)
             val requestImageFile = mFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val mImageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
-                mFile.name,
-                requestImageFile
+                "photo", mFile.name, requestImageFile
             )
 
             mStoryVM.postStory(
-                mTokenID,
-                mImageMultipart,
-                mDescriptionBody
+                mTokenID, mImageMultipart, mDescriptionBody, mLat, mLon
             )
         }
     }
@@ -160,6 +180,23 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
+
+    private fun getCurrentLocation() {
+        when {
+            checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) && checkLocationPermission(
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) -> mFusedLocationClient.lastLocation.addOnSuccessListener {
+                when {
+                    it != null -> this.myLocation = LatLng(it.latitude, it.longitude)
+                }
+            }
+            else -> {
+                toast(getString(R.string.permission_denied))
+                mBinding.tbFormLocation.isChecked = false
+            }
+        }
+    }
+
 
     private fun showCamera() {
         val mIntent = Intent(this, CameraActivity::class.java)
@@ -176,9 +213,7 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
 
     private fun setProfile() {
         mBinding.apply {
-            Glide.with(this@PostStoryActivity)
-                .load(R.drawable.default_user)
-                .circleCrop()
+            Glide.with(this@PostStoryActivity).load(R.drawable.default_user).circleCrop()
                 .into(imvFormStory)
         }
     }
@@ -220,6 +255,12 @@ class PostStoryActivity : AppCompatActivity(), PostAuthentication {
         } while (mStreamLength > 1000000)
         mBitmap.compress(Bitmap.CompressFormat.JPEG, mCompressQuality, FileOutputStream(file))
         return file
+    }
+
+    private fun checkLocationPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this, permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun actionBarButton() {

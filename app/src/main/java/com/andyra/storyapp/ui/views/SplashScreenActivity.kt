@@ -22,6 +22,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         mSessionPreference = SessionPreference(this)
         loadingSplash()
+
     }
 
     private fun loadingSplash() {

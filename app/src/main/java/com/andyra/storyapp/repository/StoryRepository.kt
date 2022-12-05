@@ -14,8 +14,8 @@ import okhttp3.RequestBody
 import retrofit2.Response
 
 class StoryRepository(
-    val mApiServices: ApiServices,
-    val mDatabase: StoryDatabase
+    private val mApiServices: ApiServices,
+    private val mDatabase: StoryDatabase
 ) {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -29,12 +29,10 @@ class StoryRepository(
                 mDatabase.mStoryDao().getLocalStory()
             }
         ).liveData
-
-        Log.e(this@StoryRepository.toString(), "ara sampai pager " +mDatabase.mStoryDao().getLocalStory())
     }
 
-    suspend fun postStoryToRemote( mTokenId: String, mPhoto: MultipartBody.Part, mDescription: RequestBody): Response<StoryResponse> =
-        ApiConfig.getApiServices().postStory(mTokenId, mPhoto, mDescription)
+    suspend fun postStoryToRemote( mTokenId: String, mPhoto: MultipartBody.Part, mDescription: RequestBody, mLat: Double?, mLon: Double?): Response<StoryResponse> =
+        ApiConfig.getApiServices().postStory(mTokenId, mPhoto, mDescription, mLat, mLon)
 
     suspend fun getUserLocation(mTokenId: String, mLocation: Int): Response<StoryResponse> =
         ApiConfig.getApiServices().getListStoryWithLocation(mTokenId, mLocation)

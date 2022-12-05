@@ -25,6 +25,7 @@
     <string name="picture">picture</string>
     <string name="logout">Log Out</string>
     <string name="maps">Maps</string>
+    <string name="add_location">Add Location</string>
 
     <!--    Content Description-->
     <string name="login_button">Log in Button</string>

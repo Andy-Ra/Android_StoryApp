@@ -78,7 +78,20 @@
             android:background="@drawable/ic_baseline_add_photo_alternate_24"
             android:backgroundTint="@color/sea_blue"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_form_camera" />
+            app:layout_constraintStart_toEndOf="@id/btn_form_camera"
+            app:layout_constraintEnd_toStartOf="@id/tb_form_location"/>
+        <ToggleButton
+            android:id="@+id/tb_form_location"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_baseline_add_location_blue_alt_24"
+            android:contentDescription="@string/add_location"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_form_gallery"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

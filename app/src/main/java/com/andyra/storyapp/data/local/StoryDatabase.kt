@@ -34,5 +34,4 @@ abstract class StoryDatabase : RoomDatabase() {
             return INSTANCE as StoryDatabase
         }
     }
-
 }

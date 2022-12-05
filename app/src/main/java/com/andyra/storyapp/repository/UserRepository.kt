@@ -13,4 +13,3 @@ class UserRepository {
     suspend fun getUserLoginFromRemote(mLoginRequest: LoginRequest): Response<LoginRegisterResponse> =
         ApiConfig.getApiServices().getUserLogin(mLoginRequest)
 }
-

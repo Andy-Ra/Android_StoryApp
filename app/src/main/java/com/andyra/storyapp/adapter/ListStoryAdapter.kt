@@ -57,7 +57,7 @@ class ListStoryAdapter :
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryResponse>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryResponse>() {
             override fun areItemsTheSame(oldStory: ListStoryResponse, newItem: ListStoryResponse): Boolean {
                 return oldStory == newItem
             }
